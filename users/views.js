@@ -1,5 +1,6 @@
 import connection from "../connection.js";
 import { createUser, getUser,getOTP,setOTP,verifyToken,
+        updateUserToken,  verify_email_phone
 
  } from "./models.js";
 import sendEmail from '../email/email_sender.js';
@@ -37,7 +38,6 @@ export const login = async (req, res) => {
 
 
 export const handleOTPVerification = async (req, res) => {
-
   const { action, otp, usertoken } = req.body;
   let user;
 
@@ -57,26 +57,20 @@ export const handleOTPVerification = async (req, res) => {
       const storedOTP = await getOTP(connection, user.id);
       if (storedOTP !== otp) {
       return res.status(401).json({ message: 'Invalid OTP' });
-      }
+      }else{
 
-    if(action == 'verify_email'){
-      await connection.query(`
-      UPDATE users SET verified_email = TRUE WHERE id = ?
-    `, [user.id]);
-      return res.status(200).json({ message: 'Email verified successfully' });
+        if(action == 'verify_email'){
+          await verify_email_phone(connection,'verified_email',user.id);
+          return res.status(200).json({ message: 'Email verified successfully' });
 
-    }else if(action == 'verify_phone_number'){
-      await connection.query(`
-      UPDATE users SET verified_phone_number = TRUE WHERE id = ?
-    `, [user.id]);
-      return res.status(200).json({ message: 'Phone number verified successfully' });
+        }else if(action == 'verify_phone_number'){
+          await verify_email_phone(connection,'verified_phone_number',user.id);
+          return res.status(200).json({ message: 'Phone number verified successfully' });
 
+        }
     }
-}
-
+  }
 };
-
-
 
 
 export const forgotPassword = async (req, res) => {

@@ -11,6 +11,7 @@ const transporter = createTransport({
     },
 });
 
+
 export default async function sendEmail(to, subject, text, html) {
     const mailOptions = {
         from: '"Info"<info@lotzcrocoz.com>', // sender address

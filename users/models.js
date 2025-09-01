@@ -11,11 +11,13 @@ export const createUserTable = async (connection) => {
       verified_email BOOLEAN DEFAULT FALSE,
       verified_phone_number BOOLEAN DEFAULT FALSE,
       usertoken VARCHAR(255) NOT NULL,
-      usertoken_expiry TIMESTAMP,
-      image VARCHAR(255),
+      usertoken_expiry TIMESTAMP NULL DEFAULT NULL,
+      profile_image VARCHAR(255),
+      gender ENUM('male', 'female', 'other') DEFAULT 'other',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
 
   // create user metadata table
   await connection.query(`
@@ -85,6 +87,16 @@ export const updateUserToken = async (connection, userId) => {
   return usertoken;
 };
 
+export const verify_email_phone = async (connection,name,userId) => {
+  await connection.query(`
+    UPDATE users SET ${name} = TRUE WHERE id = ?
+  `, [userId]);
+  // destroy OTP
+  await connection.query(`
+    UPDATE user_metadata SET otp = NULL WHERE user_id = ?
+  `, [userId]);
+};
+
 export const getUser = async (connection, identifier, value) => {
   const [user] = await connection.query(`
     SELECT * FROM users WHERE ${identifier} = ?
@@ -103,6 +115,7 @@ export const verifyToken = async (connection, usertoken) => {
     throw new Error('User not found');
   }else{
     // check if token is expired
+    console.log(user.usertoken_expiry,new Date());
     if (user.usertoken_expiry < new Date()) {
       // set token to null
       await connection.query(`
@@ -111,5 +124,5 @@ export const verifyToken = async (connection, usertoken) => {
       throw new Error('Token expired');
     }
   }
-  return user[0];
+  return user;
 };
