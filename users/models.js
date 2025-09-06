@@ -14,6 +14,11 @@ export const createUserTable = async (connection) => {
       usertoken_expiry TIMESTAMP NULL DEFAULT NULL,
       profile_image VARCHAR(255),
       gender ENUM('male', 'female', 'other') DEFAULT 'other',
+      about_me TEXT, 
+      license_number VARCHAR(25),
+      work_experience VARCHAR(5),
+      specialization VARCHAR(100),
+      date_of_birth DATE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -30,6 +35,12 @@ export const createUserTable = async (connection) => {
     )
   `);
 };
+
+export const set_dob_and_gender = async (connection, userId, dateOfBirth, gender) => {
+    await connection.query(`
+      UPDATE users SET date_of_birth = ?, gender = ? WHERE id = ?
+    `, [dateOfBirth, gender, userId]);
+  };
 
 // function to generate a random token
 const generateToken = () => {
@@ -125,4 +136,28 @@ export const verifyToken = async (connection, usertoken) => {
     }
   }
   return user;
+};
+
+export const updateUser = async (connection, userId, userData) => {
+  const { full_name, email, phone_number,
+     role,profile_image,gender,about_me,
+    license_number,work_experience,specialization,date_of_birth } = userData;
+  await connection.query(`
+    UPDATE users SET full_name = ?, email = ?, phone_number = ?,
+     role = ?, profile_image = ?, gender = ?, about_me = ?,
+     license_number = ?, work_experience = ?, specialization = ?,
+     date_of_birth = ? WHERE id = ?
+  `, [full_name, email, phone_number, role, profile_image, gender, about_me,
+      license_number, work_experience, specialization, date_of_birth, userId]);
+};
+
+export const updateUserP = async (connection, userId, userData) => {
+  const { full_name, email, phone_number,role,profile_image,gender,
+    date_of_birth } = userData;
+  await connection.query(`
+    UPDATE users SET full_name = ?, email = ?, phone_number = ?,
+     role = ?, profile_image = ?, gender = ?,
+     date_of_birth = ? WHERE id = ?
+  `, [full_name, email, phone_number, role, profile_image, gender,
+      date_of_birth, userId]);
 };

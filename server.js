@@ -2,6 +2,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import user_router from './users/routes.js';
+import patient_routes from './patient/routes.js';
 import connection from './connection.js';
 const port = process.env.PORT || 5000;
 // Get the directory name
@@ -37,8 +38,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/user', user_router);
-// app.use('/', user_router);
-
+app.use('/api/patient', patient_routes);
 
 // Start server
 app.listen(port, () => {

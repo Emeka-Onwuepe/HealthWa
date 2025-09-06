@@ -1,6 +1,7 @@
 // Get the client
 import mysql from 'mysql2/promise';
 import { createUserTable } from './users/models.js';
+import { createPatientTable } from './patient/models.js';
 
 // Create the connection to database
 const connection = await mysql.createConnection({
@@ -19,7 +20,9 @@ try {
 }
 
 const models = {
-  users: createUserTable
+  users: createUserTable,
+  patient: createPatientTable
+
 };
 
 
@@ -30,6 +33,7 @@ for (const [model, createModelTable] of Object.entries(models)) {
   if (rows.length === 0) {
     console.log(`${model.charAt(0).toUpperCase() + model.slice(1)} table does not exist`);
     // create tables
+    console.log(createModelTable)
     await createModelTable(connection);
   }
 }
