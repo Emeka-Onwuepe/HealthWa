@@ -1,6 +1,6 @@
 import connection from "../connection.js";
 import { createUser, getUser,getOTP,setOTP,verifyToken,
-        updateUserToken,  verify_email_phone
+        updateUserToken,  verify_email_phone,updatePassword
 
  } from "./models.js";
 import sendEmail from '../email/email_sender.js';
@@ -9,20 +9,42 @@ import sendEmail from '../email/email_sender.js';
 export const signup = async (req, res) => {
   
   const { full_name, email, phone_number, password, role } = req.body;
-  const userId = await createUser(connection, { full_name, email, phone_number, password, role });
   // get the user
-  const [user] = await getUser(connection, 'id', userId);
-  // get the user's OTP
-  const otp = await getOTP(connection, userId);
-  // send OTP to user's email
-  await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
-  res.status(201).json({ user });
+  try {
+    // create user
+    const userId = await createUser(connection, { full_name, email, phone_number, password, role });
+    // get user
+    const [user] = await getUser(connection, 'id', userId);
+    // get the user's OTP
+    const otp = await getOTP(connection, userId);
+    // send OTP to user's email
+    console.log(otp);
+    await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
+    return res.status(201).json({ user });
 
+  } catch (error) {
+    const msg = error.sqlMessage.split("'")
+    if (msg[3] == 'email'){
+      const [user] = await getUser(connection, 'email', email);
+      if(user.verified_email){
+        return res.status(400).json({ message: 'user already exists' });
+      }else{
+        // get the user's OTP
+        const otp = await getOTP(connection, user.id);
+        // send OTP to user's email
+        await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
+        return res.status(201).json({ user });
+      }
+      
+    }
+  }
+ 
 };
+
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  const [user] = await getUser(connection, 'email', email);
+  const [user] = await getUser(connection, 'email', email,true);
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
@@ -73,13 +95,57 @@ export const handleOTPVerification = async (req, res) => {
 };
 
 
-export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  const [user] = await getUser(connection, 'email', email);
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+export const logout = async (req, res) => {
+  const { usertoken } = req.body;
+  try {
+   const [user] = await getUser(connection,'usertoken',usertoken)
+   await updateUserToken(connection,user.id);
+   return res.status(200).json({ message: 'Logged out successfully' });
+
+  } catch (error) {
+    console.log(error)
   }
-  // Generate OTP and send email
-  await setOTP(connection, user.id);
-  res.status(200).json({ message: 'OTP sent to email' });
+    
 };
+
+
+// export const forgotPassword = async (req, res) => {
+//   const { email } = req.body;
+//   const [user] = await getUser(connection, 'email', email);
+//   if (!user) {
+//     return res.status(404).json({ message: 'User not found' });
+//   }
+//   // Generate OTP and send email
+//   await setOTP(connection, user.id);
+//   res.status(200).json({ message: 'OTP sent to email' });
+// };
+
+
+export const handlePassword = async (req,res) =>{
+  const {action} = req.body;
+
+  switch(action) {
+    case 'forgot_password':
+      // handle forgot password
+      break;
+    case 'reset_password':
+      // handle reset password
+      const {old_password, new_password,usertoken} = req.body;
+      const user = await verifyToken(connection, usertoken,true);
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+      // Check if old password is correct
+      if (user.password !== old_password) {
+        return res.status(401).json({ message: 'Invalid old password' });
+      }
+      // Update password
+      await updatePassword(connection,new_password,user.id)
+      // update token
+      await updateUserToken(connection, user.id);
+      return res.status(200).json({ message: 'Password reset successfully' });
+    default:
+      return res.status(400).json({ message: 'Invalid action' });
+  }
+
+}

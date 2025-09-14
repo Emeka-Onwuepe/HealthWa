@@ -1,3 +1,5 @@
+import { decryptPassword,passwordEncryption,generateToken } from './helpers.js'
+ import { v4 as uuidv4 } from 'uuid';
 // create user table
 export const createUserTable = async (connection) => {
   await connection.query(`
@@ -16,7 +18,7 @@ export const createUserTable = async (connection) => {
       gender ENUM('male', 'female', 'other') DEFAULT 'other',
       about_me TEXT, 
       license_number VARCHAR(25),
-      work_experience VARCHAR(5),
+      years_of_experience VARCHAR(5),
       specialization VARCHAR(100),
       date_of_birth DATE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -42,10 +44,12 @@ export const set_dob_and_gender = async (connection, userId, dateOfBirth, gender
     `, [dateOfBirth, gender, userId]);
   };
 
-// function to generate a random token
-const generateToken = () => {
-  return Math.random().toString(36).substr(2);
-};
+export const set_dob_abt_and_gender = async (connection, userId, dateOfBirth, gender,about_me) => {
+    await connection.query(`
+      UPDATE users SET date_of_birth = ?, gender = ? , about_me = ? WHERE id = ?
+    `, [dateOfBirth, gender, about_me, userId]);
+  };
+ 
 
 const generateOTP = () => {
   // Generate a 6-digit OTP
@@ -76,17 +80,24 @@ export const createUserMetadata = async (connection, userId) => {
 
 export const createUser = async (connection, userData) => {
   const { full_name, email, phone_number, password, role } = userData;
+  const  e_password = passwordEncryption(password)
   const usertoken = generateToken(); // Generate a user token
   const usertoken_expiry = new Date(Date.now() + 12 * 60 * 60 * 1000); // 12 hours from now
   const [result] = await connection.query(`
     INSERT INTO users (full_name, email, phone_number, password, role, usertoken, usertoken_expiry)
     VALUES (?, ?, ?, ?, ?, ?, ?)
-  `, [full_name, email, phone_number, password, role, usertoken, usertoken_expiry]);
+  `, [full_name, email, phone_number, e_password, role, usertoken, usertoken_expiry]);
   // create user metadata
   await createUserMetadata(connection, result.insertId);
   return result.insertId;
 };
 
+export const updatePassword = async (connection,new_password,user_id)=>{
+  const password = passwordEncryption(new_password)
+  await connection.query(`
+        UPDATE users SET password = ? WHERE id = ?
+      `, [password, user_id]);
+}
 
 
 export const updateUserToken = async (connection, userId) => {
@@ -108,25 +119,33 @@ export const verify_email_phone = async (connection,name,userId) => {
   `, [userId]);
 };
 
-export const getUser = async (connection, identifier, value) => {
+export const getUser = async (connection, identifier, value,password=false) => {
   const [user] = await connection.query(`
     SELECT * FROM users WHERE ${identifier} = ?
   `, [value]);
-  return user;
+  let [userData] = user
+    delete userData['created_at']
+    delete userData['usertoken_expiry']
+    if (!password){
+      delete userData['password']
+    }else{
+      userData['password'] = decryptPassword(userData['password'])
+    }
+    
+  return [userData];
 };
 
-export const verifyToken = async (connection, usertoken) => {
+export const verifyToken = async (connection, usertoken,password=false) => {
 
   if (!usertoken) {
     throw new Error('No token provided');
   }
 
-  const [user] = await getUser(connection, 'usertoken', usertoken);
+  const [user] = await getUser(connection, 'usertoken', usertoken,password);
   if (!user) {
     throw new Error('User not found');
   }else{
     // check if token is expired
-    console.log(user.usertoken_expiry,new Date());
     if (user.usertoken_expiry < new Date()) {
       // set token to null
       await connection.query(`
@@ -141,17 +160,17 @@ export const verifyToken = async (connection, usertoken) => {
 export const updateUser = async (connection, userId, userData) => {
   const { full_name, email, phone_number,
      role,profile_image,gender,about_me,
-    license_number,work_experience,specialization,date_of_birth } = userData;
+    license_number,years_of_experience,specialization,date_of_birth } = userData;
   await connection.query(`
     UPDATE users SET full_name = ?, email = ?, phone_number = ?,
      role = ?, profile_image = ?, gender = ?, about_me = ?,
-     license_number = ?, work_experience = ?, specialization = ?,
+     license_number = ?, years_of_experience = ?, specialization = ?,
      date_of_birth = ? WHERE id = ?
   `, [full_name, email, phone_number, role, profile_image, gender, about_me,
-      license_number, work_experience, specialization, date_of_birth, userId]);
+      license_number, years_of_experience, specialization, date_of_birth, userId]);
 };
 
-export const updateUserP = async (connection, userId, userData) => {
+export const updateUserPatient = async (connection, userId, userData) => {
   const { full_name, email, phone_number,role,profile_image,gender,
     date_of_birth } = userData;
   await connection.query(`

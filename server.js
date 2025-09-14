@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import user_router from './users/routes.js';
 import patient_routes from './patient/routes.js';
+import practitioner_router from './practisioner/routes.js'
 import connection from './connection.js';
 const port = process.env.PORT || 5000;
 // Get the directory name
@@ -15,13 +16,13 @@ const app = express();
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  connection.connect()
   next();
 });
 
 // Body parser middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
+app.use(express.urlencoded({ extended: false }))
 
 
 // const port = 5000;
@@ -39,6 +40,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/user', user_router);
 app.use('/api/patient', patient_routes);
+app.use('/api/practitioner', practitioner_router);
+  
 
 // Start server
 app.listen(port, () => {

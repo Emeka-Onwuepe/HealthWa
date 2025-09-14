@@ -1,4 +1,4 @@
-export const create_appointment_table = async (connection) => {
+export const createAppointmentTable = async (connection) => {
     await connection.query(`
         CREATE TABLE IF NOT EXISTS appointment (
             id INT AUTO_INCREMENT PRIMARY KEY,

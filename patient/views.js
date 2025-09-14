@@ -3,7 +3,6 @@ import { verifyToken, set_dob_and_gender,getUser } from "../users/models.js";
 import { createPatient, getPatientByUserId } from "./models.js";
 
 export const handlePatient = async (req, res) =>{
-    console.log(req.body)
     const patientData = req.body.data
     const action = req.body.action
 
