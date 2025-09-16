@@ -4,7 +4,7 @@ import path from 'path';
 import user_router from './users/routes.js';
 import patient_routes from './patient/routes.js';
 import practitioner_router from './practisioner/routes.js'
-
+import connection from './connection.js';
 const port = process.env.PORT || 5000;
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
