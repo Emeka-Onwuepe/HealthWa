@@ -21,7 +21,7 @@ dotenv.config();
 // Create the connection pool. The pool-specific settings are the defaults
 const connection = mysql.createPool({
   host: process.env.HOST || 'localhost',
-  user: process.env.USER || 'root',
+  user: process.env.DB_USER || 'root',
   database: process.env.DATABASE || 'HealthWa',
   password: process.env.PASSWORD || '',
   waitForConnections: true,
