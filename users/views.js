@@ -3,7 +3,7 @@ import { createUser, getUser,getOTP,setOTP,verifyToken,
         updateUserToken,  verify_email_phone,updatePassword
 
  } from "./models.js";
-import sendEmail from '../email/email_sender.js';
+// import sendEmail from '../email/email_sender.js';
 
 
 export const signup = async (req, res) => {
@@ -19,7 +19,7 @@ export const signup = async (req, res) => {
     const otp = await getOTP(connection, userId);
     // send OTP to user's email
     console.log(otp);
-    await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
+    // await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
     return res.status(201).json({ user });
 
   } catch (error) {
@@ -32,7 +32,7 @@ export const signup = async (req, res) => {
         // get the user's OTP
         const otp = await getOTP(connection, user.id);
         // send OTP to user's email
-        await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
+        // await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
         return res.status(201).json({ user });
       }
       
@@ -71,7 +71,7 @@ export const handleOTPVerification = async (req, res) => {
 
   if (action === 'get_otp') {
     const otp = await setOTP(connection, user.id);
-    await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
+    // await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
     return res.status(200).json({ message: 'OTP sent to email' });
 
   }else{
