@@ -4,6 +4,10 @@ import { createUserTable } from './users/models.js';
 import { createPatientTable } from './patient/models.js';
 import { createAppointmentTable } from './appointment/models.js';
 import { doctorPatientTable , createDoctorTable } from './practisioner/models.js';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Create the connection to database
 // const connection = await mysql.createConnection({
@@ -16,10 +20,10 @@ import { doctorPatientTable , createDoctorTable } from './practisioner/models.js
 
 // Create the connection pool. The pool-specific settings are the defaults
 const connection = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  database: 'HealthWa',
-  password: '',
+  host: process.env.HOST || 'localhost',
+  user: process.env.USER || 'root',
+  database: process.env.DATABASE || 'HealthWa',
+  password: process.env.PASSWORD || '',
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`

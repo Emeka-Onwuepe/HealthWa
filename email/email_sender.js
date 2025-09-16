@@ -1,13 +1,16 @@
 import { createTransport } from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Replace with your Namecheap hosting SMTP details
 const transporter = createTransport({
-    host: 'lotzcrocoz.com', // e.g., mail.example.com
-    port: 465, // or 587 for TLS
+    host: process.env.EMAIL_HOST, // e.g., mail.example.com
+    port: process.env.EMAIL_PORT, // or 587 for TLS
     secure: true, // true for port 465, false for 587
     auth: {
-        user: 'info@lotzcrocoz.com', // your Namecheap email address
-        pass: 'lotz@2025', // your email password
+        user: process.env.EMAIL_USER, // your Namecheap email address
+        pass: process.env.EMAIL_PASS, // your email password
     },
 });
 

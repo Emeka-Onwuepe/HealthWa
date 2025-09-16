@@ -6,12 +6,13 @@
   "type": "module",
   "scripts": {
     "start": "node server",
-    "dev": "node --watch server"
+    "dev": "node --watch --env-file=.env server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "mysql2": "^3.14.3",
     "nodemailer": "^7.0.5",
