@@ -23,7 +23,7 @@ export const createDoctorTable = async (connection) => {
             time_zone VARCHAR(255) NOT NULL,
             years_of_experience INT NOT NULL,
             user_id INT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     `);
 }
@@ -59,8 +59,8 @@ export const doctorPatientTable = async (connection) =>{
             id INT AUTO_INCREMENT PRIMARY KEY,
             doctor_id INT NOT NULL,
             patient_id INT NOT NULL,
-            FOREIGN KEY (doctor_id) REFERENCES doctor(id),
-            FOREIGN KEY (patient_id) REFERENCES patient(id)
+            FOREIGN KEY (doctor_id) REFERENCES doctor(id) ON DELETE CASCADE,
+            FOREIGN KEY (patient_id) REFERENCES patient(id) ON DELETE CASCADE
         )
     `);
 }

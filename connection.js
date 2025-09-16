@@ -55,8 +55,8 @@ const models = {
   users: createUserTable,
   patient: createPatientTable,
   appointment: createAppointmentTable,
-  doctor_patient: doctorPatientTable,
-  doctor: createDoctorTable
+  doctor: createDoctorTable,
+  doctor_patient: doctorPatientTable
 };
 
 
