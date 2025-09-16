@@ -3,14 +3,30 @@ import mysql from 'mysql2/promise';
 import { createUserTable } from './users/models.js';
 import { createPatientTable } from './patient/models.js';
 import { createAppointmentTable } from './appointment/models.js';
-import { userPatientTable , createDoctorTable } from './practisioner/models.js';
+import { doctorPatientTable , createDoctorTable } from './practisioner/models.js';
 
 // Create the connection to database
-const connection = await mysql.createConnection({
+// const connection = await mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   database: 'HealthWa',
+//   password: ''
+// });
+
+
+// Create the connection pool. The pool-specific settings are the defaults
+const connection = mysql.createPool({
   host: 'localhost',
   user: 'root',
   database: 'HealthWa',
-  password: ''
+  password: '',
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
 });
 
 
@@ -35,7 +51,7 @@ const models = {
   users: createUserTable,
   patient: createPatientTable,
   appointment: createAppointmentTable,
-  user_patient: userPatientTable,
+  doctor_patient: doctorPatientTable,
   doctor: createDoctorTable
 };
 

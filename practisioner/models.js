@@ -28,39 +28,6 @@ export const createDoctorTable = async (connection) => {
     `);
 }
 
-export const userPatientTable = async (connection) =>{
-    await connection.query(`
-        CREATE TABLE IF NOT EXISTS user_patient (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            patient_id INT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (patient_id) REFERENCES patient(id)
-        )
-    `);
-}
-
-
-export const create_user_patient = async (connection, user_id, patient_id) => {
-    await connection.query(`
-        INSERT INTO user_patient (user_id, patient_id)
-        VALUES (?, ?)
-    `, [user_id, patient_id]);
-}
-
-export const getPatientsByUserId = async (connection, user_id) => {
-    const [rows] = await connection.query(`
-        SELECT patient.*,users.*
-        FROM patient
-        JOIN user_patient ON patient.id = user_patient.patient_id
-        JOIN users ON users.id =  user_patient.user_id
-        WHERE user_patient.user_id = ?
-        
-    `, [user_id]);
-    return rows;
-}
-
-
 export const createDoctor = async (connection, doctorData) => {
     const { license_number, specialization, city_of_practice, place_of_work,
          region, state_of_practice, time_zone, years_of_experience, user_id } = doctorData;
@@ -85,11 +52,54 @@ export const updateDoctor = async (connection, doctorData) => {
         state_of_practice, time_zone, years_of_experience, id]);
 }
 
-export const getDoctorsByUserId = async (connection, user_id) => {
+
+export const doctorPatientTable = async (connection) =>{
+    await connection.query(`
+        CREATE TABLE IF NOT EXISTS doctor_patient (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            doctor_id INT NOT NULL,
+            patient_id INT NOT NULL,
+            FOREIGN KEY (doctor_id) REFERENCES doctor(id),
+            FOREIGN KEY (patient_id) REFERENCES patient(id)
+        )
+    `);
+}
+
+
+export const create_user_patient = async (connection, doctor_id, patient_id) => {
+    await connection.query(`
+        INSERT INTO user_patient (doctor_id, patient_id)
+        VALUES (?, ?)
+    `, [doctor_id, patient_id]);
+}
+
+export const getPatientsByDoctorId = async (connection, doctor_id) => {
     const [rows] = await connection.query(`
-        SELECT doctor.*
-        FROM doctor
-        WHERE doctor.user_id = ?
-    `, [user_id]);
+       SELECT patient.*,users.*
+       FROM patient
+       JOIN users ON users.id =  patient.user_id
+       WHERE patient.id IN 
+       (SELECT patient_id FROM doctor_patient WHERE doctor_id = ?)
+    `, [doctor_id]);
     return rows;
 }
+
+export const getDoctorsByPatientId = async (connection, patient_id) => {
+    const [rows] = await connection.query(`
+       SELECT doctor.*,users.*
+       FROM doctor
+       JOIN users ON users.id =  doctor.user_id
+       WHERE doctor.id IN 
+       (SELECT doctor_id FROM doctor_patient WHERE patient_id = ?)
+    `, [patient_id]);
+    return rows;
+}
+
+// export const getDoctors_By_UserId = async (connection, user_id) => {
+//     const [rows] = await connection.query(`
+//         SELECT doctor.*
+//         FROM doctor
+//         WHERE doctor.user_id = ?
+//     `, [user_id]);
+//     return rows;
+// }

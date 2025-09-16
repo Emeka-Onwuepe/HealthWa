@@ -124,6 +124,11 @@ export const getUser = async (connection, identifier, value,password=false) => {
     SELECT * FROM users WHERE ${identifier} = ?
   `, [value]);
   let [userData] = user
+
+  if (!userData) {
+    throw new Error('User not found');
+  }
+  
     delete userData['created_at']
     delete userData['usertoken_expiry']
     if (!password){

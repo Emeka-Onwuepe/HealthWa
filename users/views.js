@@ -131,19 +131,25 @@ export const handlePassword = async (req,res) =>{
     case 'reset_password':
       // handle reset password
       const {old_password, new_password,usertoken} = req.body;
-      const user = await verifyToken(connection, usertoken,true);
-      if (!user) {
+      try {
+        const user = await verifyToken(connection, usertoken,true);
+        if (!user) {
         return res.status(401).json({ message: 'Invalid token' });
+        }
+        // Check if old password is correct
+        if (user.password !== old_password) {
+          return res.status(401).json({ message: 'Invalid old password' });
+        }
+        // Update password
+        await updatePassword(connection,new_password,user.id)
+        // update token
+        await updateUserToken(connection, user.id);
+        return res.status(200).json({ message: 'Password reset successfully' });
+      } catch (error) {
+        return res.status(401).json({ message: error.message });
+
       }
-      // Check if old password is correct
-      if (user.password !== old_password) {
-        return res.status(401).json({ message: 'Invalid old password' });
-      }
-      // Update password
-      await updatePassword(connection,new_password,user.id)
-      // update token
-      await updateUserToken(connection, user.id);
-      return res.status(200).json({ message: 'Password reset successfully' });
+      
     default:
       return res.status(400).json({ message: 'Invalid action' });
   }

@@ -1,12 +1,10 @@
 import { set_dob_abt_and_gender,getUser ,verifyToken} from '../users/models.js'
-import { getPatientsByUserId, getDoctorsByUserId,createDoctor } from './models.js'
+import { getPatientsByDoctorId,createDoctor } from './models.js'
 import connection from "../connection.js";
 
 
 export const handlePractitioner = async (req,res) =>{
 
-    console.log(req.body)
-    console.log(req.body.usertoken)
     const doctorData = req.body.data
     const action = req.body.action
 
@@ -32,15 +30,13 @@ export const handlePractitioner = async (req,res) =>{
 
            const [doctor] = await getDoctorsByUserId(connection,user.id);
            if(!doctor){
-            console.log('doctor not found')
             await createDoctor(connection, doctorData);
            }
            let [userData] = await getUser(connection, 'id', user.id);
-           const patients = await getPatientsByUserId(connection,user.id)
+           const patients = await getPatientsByDoctorId(connection,doctor.id)
             
            userData = {...doctor, ...userData }
            delete userData['user_id']
-           console.log(userData)
 
             return res.status(200).json({ user:userData, patients });
 
