@@ -8,10 +8,10 @@ import { createUserTable } from './users/models.js';
 import { createPatientTable } from './patient/models.js';
 import { createAppointmentTable } from './appointment/models.js';
 import { doctorPatientTable , createDoctorTable } from './practisioner/models.js';
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
 // Load environment variables from .env file
-// dotenv.config();
+dotenv.config();
 
 // Create the connection to database
 // const connection = await mysql.createConnection({
