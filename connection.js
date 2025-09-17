@@ -8,10 +8,11 @@ import { createUserTable } from './users/models.js';
 import { createPatientTable } from './patient/models.js';
 import { createAppointmentTable } from './appointment/models.js';
 import { doctorPatientTable , createDoctorTable } from './practisioner/models.js';
-import dotenv from 'dotenv';
+import data from './locals.js'
+// import dotenv from 'dotenv';
 
 // Load environment variables from .env file
-dotenv.config();
+// dotenv.config();
 
 // Create the connection to database
 // const connection = await mysql.createConnection({
@@ -24,11 +25,16 @@ dotenv.config();
 const pg = await import('pg')
 
 const connection = new pg.Pool({
-  host: process.env.HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  database: process.env.DATABASE || 'HealthWa',
-  password: process.env.PASSWORD || '',
-  port: process.env.PORT || 5432,
+  // host: process.env.HOST || 'localhost',
+  // user: process.env.DB_USER || 'root',
+  // database: process.env.DATABASE || 'HealthWa',
+  // password: process.env.PASSWORD || '',
+  // port: process.env.PORT || 5432,
+  host: data.HOST || 'localhost',
+  user: data.DB_USER || 'root',
+  database: data.DATABASE || 'HealthWa',
+  password: data.PASSWORD || '',
+  port: data.DB_PORT || 5432,
   ssl: true,
   max: 20, // set pool max size to 20
   idleTimeoutMillis: 1000, // close idle clients after 1 second
