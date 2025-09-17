@@ -23,7 +23,7 @@ import { doctorPatientTable , createDoctorTable } from './practisioner/models.js
 
 const pg = await import('pg')
 
-const connection = pg.Pool({
+const connection = new pg.Pool({
   host: process.env.HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   database: process.env.DATABASE || 'HealthWa',
