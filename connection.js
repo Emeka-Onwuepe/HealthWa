@@ -21,21 +21,36 @@ dotenv.config();
 //   password: ''
 // });
 
+const pg = await import('pg')
 
-// Create the connection pool. The pool-specific settings are the defaults
-const connection = mysql.createPool({
+const connection = pg.Pool({
   host: process.env.HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   database: process.env.DATABASE || 'HealthWa',
   password: process.env.PASSWORD || '',
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
-});
+  port: 5432,
+  ssl: true,
+  max: 20, // set pool max size to 20
+  idleTimeoutMillis: 1000, // close idle clients after 1 second
+  connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
+  maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
+})
+
+
+// Create the connection pool. The pool-specific settings are the defaults
+// const connection = mysql.createPool({
+//   host: process.env.HOST || 'localhost',
+//   user: process.env.DB_USER || 'root',
+//   database: process.env.DATABASE || 'HealthWa',
+//   password: process.env.PASSWORD || '',
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+//   idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+//   queueLimit: 0,
+//   enableKeepAlive: true,
+//   keepAliveInitialDelay: 0,
+// });
 
 
 // Keep the connection alive
