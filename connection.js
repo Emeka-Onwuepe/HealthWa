@@ -30,7 +30,7 @@ const connection = new pg.Pool({
   // database: process.env.DATABASE || 'HealthWa',
   // password: process.env.PASSWORD || '',
   // port: process.env.PORT || 5432,
-  // host: data.HOST || 'localhost',
+  host: data.HOST || 'localhost',
   user: data.DB_USER || 'root',
   database: data.DATABASE || 'HealthWa',
   password: data.PASSWORD || '',
