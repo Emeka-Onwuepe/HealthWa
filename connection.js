@@ -1,13 +1,17 @@
 // Get the client
-import mysql from 'mysql2/promise';
+
+// import mysql from 'mysql2/promise';
+// import mysql using import('mysql2/promise')
+const mysql = await import('mysql2/promise');
+
 import { createUserTable } from './users/models.js';
 import { createPatientTable } from './patient/models.js';
 import { createAppointmentTable } from './appointment/models.js';
 import { doctorPatientTable , createDoctorTable } from './practisioner/models.js';
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
 // Load environment variables from .env file
-// dotenv.config();
+dotenv.config();
 
 // Create the connection to database
 // const connection = await mysql.createConnection({
