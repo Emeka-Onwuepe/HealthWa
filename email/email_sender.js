@@ -1,7 +1,7 @@
 import { createTransport } from 'nodemailer';
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
-// dotenv.config();
+dotenv.config();
 
 // Replace with your Namecheap hosting SMTP details
 const transporter = createTransport({

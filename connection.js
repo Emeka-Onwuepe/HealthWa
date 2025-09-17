@@ -8,10 +8,10 @@ import { createUserTable } from './users/models.js';
 import { createPatientTable } from './patient/models.js';
 import { createAppointmentTable } from './appointment/models.js';
 import { doctorPatientTable , createDoctorTable } from './practisioner/models.js';
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
 // Load environment variables from .env file
-// dotenv.config();
+dotenv.config();
 
 // Create the connection to database
 // const connection = await mysql.createConnection({
@@ -28,7 +28,7 @@ const connection = new pg.Pool({
   user: process.env.DB_USER || 'root',
   database: process.env.DATABASE || 'HealthWa',
   password: process.env.PASSWORD || '',
-  port: 5432,
+  port: process.env.PORT || 5432,
   ssl: true,
   max: 20, // set pool max size to 20
   idleTimeoutMillis: 1000, // close idle clients after 1 second
