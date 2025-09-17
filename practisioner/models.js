@@ -13,7 +13,7 @@
 export const createDoctorTable = async (connection) => {
     await connection.query(`
         CREATE TABLE IF NOT EXISTS doctor (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             license_number VARCHAR(255) NOT NULL,
             specialization VARCHAR(255) NOT NULL,
             city_of_practice VARCHAR(255) NOT NULL,
@@ -22,7 +22,7 @@ export const createDoctorTable = async (connection) => {
             state_of_practice VARCHAR(255) NOT NULL,
             time_zone VARCHAR(255) NOT NULL,
             years_of_experience INT NOT NULL,
-            user_id INT NOT NULL,
+            user_id INTEGER NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     `);
@@ -56,9 +56,9 @@ export const updateDoctor = async (connection, doctorData) => {
 export const doctorPatientTable = async (connection) =>{
     await connection.query(`
         CREATE TABLE IF NOT EXISTS doctor_patient (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            doctor_id INT NOT NULL,
-            patient_id INT NOT NULL,
+            id SERIAL PRIMARY KEY,
+            doctor_id INTEGER NOT NULL,
+            patient_id INTEGER NOT NULL,
             FOREIGN KEY (doctor_id) REFERENCES doctor(id) ON DELETE CASCADE,
             FOREIGN KEY (patient_id) REFERENCES patient(id) ON DELETE CASCADE
         )

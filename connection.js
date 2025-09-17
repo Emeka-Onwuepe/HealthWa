@@ -25,22 +25,31 @@ import data from './locals.js'
 const pg = await import('pg')
 
 const connection = new pg.Pool({
-  // host: process.env.HOST || 'localhost',
-  // user: process.env.DB_USER || 'root',
-  // database: process.env.DATABASE || 'HealthWa',
-  // password: process.env.PASSWORD || '',
-  // port: process.env.PORT || 5432,
-  host: data.HOST || 'localhost',
-  user: data.DB_USER || 'root',
-  database: data.DATABASE || 'HealthWa',
-  password: data.PASSWORD || '',
-  port: data.DB_PORT || 5432,
-  ssl: true,
-  max: 20, // set pool max size to 20
-  idleTimeoutMillis: 1000, // close idle clients after 1 second
-  connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
-  maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
+connectionString: data.I_HOST,
+ssl: true,
+max: 20, // set pool max size to 20
+idleTimeoutMillis: 1000, // close idle clients after 1 second
+connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
+maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
 })
+
+// const connection = new pg.Pool({
+//   // host: process.env.HOST || 'localhost',
+//   // user: process.env.DB_USER || 'root',
+//   // database: process.env.DATABASE || 'HealthWa',
+//   // password: process.env.PASSWORD || '',
+//   // port: process.env.PORT || 5432,
+//   // host: data.HOST || 'localhost',
+//   user: data.DB_USER || 'root',
+//   database: data.DATABASE || 'HealthWa',
+//   password: data.PASSWORD || '',
+//   port: data.DB_PORT || 5432,
+//   // ssl: true,
+//   max: 20, // set pool max size to 20
+//   idleTimeoutMillis: 1000, // close idle clients after 1 second
+//   connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
+//   maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
+// })
 
 
 // Create the connection pool. The pool-specific settings are the defaults
@@ -84,12 +93,13 @@ const models = {
   doctor_patient: doctorPatientTable
 };
 
+await connection.connect();
 
 for (const [model, createModelTable] of Object.entries(models)) {
 
-  // check if tables exist
-  const [rows] = await connection.query(`SHOW TABLES LIKE '${model}'`);
-  if (rows.length === 0) {
+  // check if tables exist (POSTGRESQL)
+  const {rows} = await connection.query(`SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '${model}')`);
+  if (!rows[0].exists) {
     console.log(`${model.charAt(0).toUpperCase() + model.slice(1)} table does not exist`);
     // create tables
     console.log(createModelTable)

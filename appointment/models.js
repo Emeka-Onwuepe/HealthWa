@@ -1,22 +1,39 @@
 export const createAppointmentTable = async (connection) => {
     await connection.query(`
         CREATE TABLE IF NOT EXISTS appointment (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            type VARCHAR(100) NOT NULL,
+            id SERIAL PRIMARY KEY,
+            type VARCHAR(50) NOT NULL,
             symptoms TEXT NOT NULL,
-            preferred_professional VARCHAR(255),
-            preferred_gender ENUM('male', 'female', 'other'),
-            doctor_id INT NOT NULL,
-            patient_id INT NOT NULL,
-            schedule DATETIME NOT NULL,
-            status ENUM('upcoming', 'completed', 'cancelled', 'pending', 'ongoing') NOT NULL,
+            preferred_professional VARCHAR(50),
+            preferred_gender VARCHAR(10) CHECK (preferred_gender IN ('male', 'female', 'other')),
+            doctor_id INTEGER NOT NULL,
+            patient_id INTEGER NOT NULL,
+            schedule TIMESTAMP NOT NULL,
+            status VARCHAR(15) CHECK (status IN ('upcoming', 'completed', 'cancelled', 'pending', 'ongoing')) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (doctor_id) REFERENCES users(id),
             FOREIGN KEY (patient_id) REFERENCES users(id)
-        )
+        );
+
+        CREATE OR REPLACE FUNCTION update_updated_at()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            NEW.updated_at = NOW();
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+
+        CREATE TRIGGER update_updated_at_trigger
+          BEFORE UPDATE ON appointment
+          FOR EACH ROW
+          EXECUTE FUNCTION update_updated_at();
+
     `);
 }
+
+
+
 
 
 export const create_appointment = async (connection, appointmentData) => {

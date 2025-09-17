@@ -1,21 +1,21 @@
 import { decryptPassword,passwordEncryption,generateToken } from './helpers.js'
-//  import { v4 as uuidv4 } from 'uuid';
-// create user table
+
+// create user table (postgres syntax) 
 export const createUserTable = async (connection) => {
   await connection.query(`
     CREATE TABLE IF NOT EXISTS users (
-      id INT AUTO_INCREMENT PRIMARY KEY,
+      id SERIAL PRIMARY KEY,
       full_name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL UNIQUE,
       phone_number VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
-      role ENUM('patient', 'practitioner','admin') NOT NULL DEFAULT 'patient',
+      role VARCHAR(50) NOT NULL DEFAULT 'patient',
       verified_email BOOLEAN DEFAULT FALSE,
       verified_phone_number BOOLEAN DEFAULT FALSE,
       usertoken VARCHAR(255) NOT NULL,
       usertoken_expiry TIMESTAMP NULL DEFAULT NULL,
       profile_image VARCHAR(255),
-      gender ENUM('male', 'female', 'other') DEFAULT 'other',
+      gender VARCHAR(6) CHECK (gender IN ('male', 'female', 'other')) DEFAULT 'other',
       about_me TEXT, 
       license_number VARCHAR(25),
       years_of_experience VARCHAR(5),
@@ -29,8 +29,8 @@ export const createUserTable = async (connection) => {
   // create user metadata table
   await connection.query(`
     CREATE TABLE IF NOT EXISTS user_metadata (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT NOT NULL,
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
       otp VARCHAR(6) NOT NULL,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

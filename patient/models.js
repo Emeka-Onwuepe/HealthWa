@@ -2,7 +2,7 @@
 
 export const createPatientTable = async (connection) => {
     await connection.query(`CREATE TABLE IF NOT EXISTS patient (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         occupation VARCHAR(255),
         weight VARCHAR(50),
         height VARCHAR(50),
