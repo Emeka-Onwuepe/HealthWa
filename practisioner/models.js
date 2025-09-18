@@ -9,6 +9,7 @@
 //       time_zone,
 //       years_of_experience,
 // }
+import { getQueryData } from '../helpers.js'
 
 export const createDoctorTable = async (connection) => {
     await connection.query(`

@@ -1,5 +1,5 @@
 // create patient table
-
+import { getQueryData } from '../helpers.js'
 export const createPatientTable = async (connection) => {
     await connection.query(`CREATE TABLE IF NOT EXISTS patient (
         id SERIAL PRIMARY KEY,

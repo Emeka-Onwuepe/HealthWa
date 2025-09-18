@@ -1,4 +1,4 @@
-import { getQueryData } from "../helpers";
+import { getQueryData } from "../helpers.js";
 
 export const createAppointmentTable = async (connection) => {
     await connection.query(`
