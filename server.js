@@ -6,6 +6,7 @@ import patient_routes from './patient/routes.js';
 import practitioner_router from './practisioner/routes.js'
 import connection from './connection.js';
 const port = process.env.PORT || 5000;
+import cors from 'cors';
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,15 +20,14 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");  
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");  // allow access from localhost:3000
   res.header("Access-Control-Allow-Origin", "http://localhost:8081");  // allow access from localhost:8081
-
   next();
 });
 
-// cors middleware for localhost:3000
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "http://localhost:3000");  // allow access from localhost:3000
-//   next();
-// });
+app.use(cors());
+// add allowed hosts
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:8081']
+}));
 
 // Body parser middleware
 app.use(express.json());
