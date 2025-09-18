@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors'
 import { fileURLToPath } from 'url';
 import path from 'path';
 import user_router from './users/routes.js';
@@ -10,6 +9,7 @@ const port = process.env.PORT || 5000;
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const cors = await import('cors')
 
 // import as es6 model
 
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 // add allowed hosts
-app.use( import('cors').then(cors=>cors()));
+// app.use(cors());
 
 
 // Body parser middleware
