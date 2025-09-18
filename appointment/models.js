@@ -1,3 +1,5 @@
+import { getQueryData } from "../helpers";
+
 export const createAppointmentTable = async (connection) => {
     await connection.query(`
         CREATE TABLE IF NOT EXISTS appointment (
@@ -46,12 +48,12 @@ export const create_appointment = async (connection, appointmentData) => {
 }
 
 export const get_appointments_by_user = async (connection, userId) => {
-    const [rows] = await connection.query(`
+    const queryData = await connection.query(`
         SELECT * FROM appointment 
         WHERE doctor_id = $1 OR patient_id = $2
         ORDER BY schedule DESC
     `, [userId, userId]);
-    return rows;
+    return getQueryData(queryData,true);
 }
 export const update_appointment_status = async (connection, appointmentId, status) => {
     await connection.query(`
@@ -66,8 +68,8 @@ export const delete_appointment = async (connection, appointmentId) => {
 }
 
 export const get_appointments_by_status = async (connection, status) => {
-    const [rows] = await connection.query(`
+    let queryData = await connection.query(`
         SELECT * FROM appointment WHERE status = $1
     `, [status]);
-    return rows;
+    return getQueryData(queryData,true);
 }
