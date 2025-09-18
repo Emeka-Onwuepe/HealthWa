@@ -74,25 +74,27 @@ export const create_user_patient = async (connection, doctor_id, patient_id) => 
 }
 
 export const getPatientsByDoctorId = async (connection, doctor_id) => {
-    const [rows] = await connection.query(`
+    let queryData = await connection.query(`
        SELECT patient.*,users.*
        FROM patient
        JOIN users ON users.id =  patient.user_id
        WHERE patient.id IN 
        (SELECT patient_id FROM doctor_patient WHERE doctor_id = $1)
     `, [doctor_id]);
-    return rows;
+    return getQueryData(queryData,true);
+    
 }
 
 export const getDoctorsByPatientId = async (connection, patient_id) => {
-    const [rows] = await connection.query(`
+    let queryData = await connection.query(`
        SELECT doctor.*,users.*
        FROM doctor
        JOIN users ON users.id =  doctor.user_id
        WHERE doctor.id IN 
        (SELECT doctor_id FROM doctor_patient WHERE patient_id = $1)
     `, [patient_id]);
-    return rows;
+    return getQueryData(queryData,true);
+    
 }
 
 // export const getDoctors_By_UserId = async (connection, user_id) => {

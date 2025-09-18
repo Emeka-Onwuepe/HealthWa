@@ -28,8 +28,8 @@ export const createPatient = async (connection, patientData) => {
 
 
 export const getPatientByUserId = async (connection, userId) => {
-    const [rows] = await connection.query(`SELECT * FROM patient WHERE user_id = $`, [userId]);
-    return rows[0];
+    let queryData = await connection.query(`SELECT * FROM patient WHERE user_id = $`, [userId]);
+    return getQueryData(queryData);  
 }
 
 export const updatePatient = async (connection, userId, patientData) => {
