@@ -37,7 +37,7 @@ const pg = await import('pg')
 // })
 
 const connection = new pg.Pool({
-connectionString: data.E_HOST,
+connectionString: data.I_HOST,
 ssl: true,
 max: 20, // set pool max size to 20
 idleTimeoutMillis: 5000, // close idle clients after 5 seconds
