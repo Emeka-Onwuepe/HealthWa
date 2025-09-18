@@ -9,7 +9,8 @@ const port = process.env.PORT || 5000;
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const cors = await import('cors');
+const cors = require('cors'); // Correctly import the cors module
+
 const app = express();
 
 // add middleware for CORS
@@ -22,11 +23,11 @@ app.use((req, res, next) => {
   next();
 });
 
-
 // add allowed hosts
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:8081']
 }));
+
 
 // Body parser middleware
 app.use(express.json());
