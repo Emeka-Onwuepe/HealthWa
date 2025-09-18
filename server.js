@@ -26,10 +26,7 @@ app.use((req, res, next) => {
 });
 
 // add allowed hosts
-app.use(cors({
-  origin: 'http://localhost:8081',
-  optionsSuccessStatus: 200,
-}));
+app.use(cors());
 
 
 // Body parser middleware
