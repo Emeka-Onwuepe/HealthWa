@@ -6,11 +6,10 @@ import patient_routes from './patient/routes.js';
 import practitioner_router from './practisioner/routes.js'
 import connection from './connection.js';
 const port = process.env.PORT || 5000;
-import cors from 'cors';
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+const cors = await import('cors');
 const app = express();
 
 // add middleware for CORS
