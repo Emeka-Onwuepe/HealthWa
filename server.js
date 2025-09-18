@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 // add allowed hosts
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:8081'],
+  origin: 'http://localhost:8081',
   optionsSuccessStatus: 200,
 }));
 
