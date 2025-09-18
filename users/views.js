@@ -7,24 +7,26 @@ import sendEmail from '../email/email_sender.js';
 
 
 export const signup = async (req, res) => {
-  
+  await connection.connect();
+  console.log('started')
   const { full_name, email, phone_number, password, role } = req.body;
   // get the user
   try {
     // create user
-    const userId = await createUser(connection, { full_name, email, phone_number, password, role });
-    // get user
-    const [user] = await getUser(connection, 'id', userId);
+    console.log('create user')
+    const user = await createUser(connection, { full_name, email, phone_number, password, role });
     // get the user's OTP
-    const otp = await getOTP(connection, userId);
+    console.log('get otp')
+    const otp = await getOTP(connection, user.id);
     // send OTP to user's email
-    console.log(otp);
-    await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
+    console.log('otp',otp);
+
+    // await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
     return res.status(201).json({ user });
 
   } catch (error) {
-    const msg = error.sqlMessage.split("'")
-    if (msg[3] == 'email'){
+    const  constraint = error.constraint
+    if (constraint == 'users_email_key'){
       const [user] = await getUser(connection, 'email', email);
       if(user.verified_email){
         return res.status(400).json({ message: 'user already exists' });
@@ -43,6 +45,7 @@ export const signup = async (req, res) => {
 
 
 export const login = async (req, res) => {
+  await connection.connect();
   const { email, password } = req.body;
   const [user] = await getUser(connection, 'email', email,true);
   if (!user) {
@@ -60,6 +63,7 @@ export const login = async (req, res) => {
 
 
 export const handleOTPVerification = async (req, res) => {
+  await connection.connect();
   const { action, otp, usertoken } = req.body;
   let user;
 
@@ -96,6 +100,7 @@ export const handleOTPVerification = async (req, res) => {
 
 
 export const logout = async (req, res) => {
+  await connection.connect();
   const { usertoken } = req.body;
   try {
    const [user] = await getUser(connection,'usertoken',usertoken)

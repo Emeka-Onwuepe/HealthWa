@@ -24,66 +24,28 @@ import data from './locals.js'
 
 const pg = await import('pg')
 
-const connection = new pg.Pool({
-connectionString: data.E_HOST,
-ssl: true,
-max: 20, // set pool max size to 20
-idleTimeoutMillis: 5000, // close idle clients after 5 seconds
-// connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
-maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
-})
-
 // const connection = new pg.Pool({
-//   // host: process.env.HOST || 'localhost',
-//   // user: process.env.DB_USER || 'root',
-//   // database: process.env.DATABASE || 'HealthWa',
-//   // password: process.env.PASSWORD || '',
-//   // port: process.env.PORT || 5432,
-//   // host: data.HOST || 'localhost',
-//   user: data.DB_USER || 'root',
-//   database: data.DATABASE || 'HealthWa',
-//   password: data.PASSWORD || '',
-//   port: data.DB_PORT || 5432,
-//   // ssl: true,
-//   max: 20, // set pool max size to 20
-//   idleTimeoutMillis: 1000, // close idle clients after 1 second
-//   connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
-//   maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
+// connectionString: data.E_HOST,
+// ssl: true,
+// max: 20, // set pool max size to 20
+// idleTimeoutMillis: 5000, // close idle clients after 5 seconds
+// // connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
+// maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
 // })
 
-
-// Create the connection pool. The pool-specific settings are the defaults
-// const connection = mysql.createPool({
-//   host: process.env.HOST || 'localhost',
-//   user: process.env.DB_USER || 'root',
-//   database: process.env.DATABASE || 'HealthWa',
-//   password: process.env.PASSWORD || '',
-//   waitForConnections: true,
-//   connectionLimit: 10,
-//   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-//   idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-//   queueLimit: 0,
-//   enableKeepAlive: true,
-//   keepAliveInitialDelay: 0,
-// });
+const connection = new pg.Pool({
+  user: data.DB_USER || 'root',
+  database: data.DATABASE || 'HealthWa',
+  password: data.PASSWORD || '',
+  port: data.DB_PORT || 5432,
+  // ssl: true,
+  max: 20, // set pool max size to 20
+  idleTimeoutMillis: 1000, // close idle clients after 1 second
+  connectionTimeoutMillis: 1000, // return an error after 1 second if connection could not be established
+  maxUses: 7500, // close (and replace) a connection after it has been used 7500 times (see below for discussion)
+})
 
 
-// Keep the connection alive
-// setInterval(async () => {
-//   try {
-//     await connection.query('SELECT 1');
-//   } catch (err) {
-//     console.error('Error keeping the connection alive:', err);
-//   }
-// }, 60000); // Ping every 60 seconds
-
-// check if connection is successful
-// try {
-//   await connection.connect();
-//   console.log('Connected to the database');
-// } catch (error) {
-//   console.error('Database connection failed:', error);
-// }
 
 const models = {
   users: createUserTable,

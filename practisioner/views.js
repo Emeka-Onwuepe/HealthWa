@@ -4,7 +4,7 @@ import connection from "../connection.js";
 
 
 export const handlePractitioner = async (req,res) =>{
-
+    await connection.connect();
     const doctorData = req.body.data
     const action = req.body.action
 

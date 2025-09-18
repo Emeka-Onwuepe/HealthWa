@@ -35,7 +35,7 @@ export const createDoctor = async (connection, doctorData) => {
     await connection.query(`
         INSERT INTO doctor (license_number, specialization, city_of_practice, 
         place_of_work, region, state_of_practice, time_zone, years_of_experience, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) `, [license_number, specialization, city_of_practice, place_of_work, region, 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) `, [license_number, specialization, city_of_practice, place_of_work, region, 
         state_of_practice, time_zone, years_of_experience, user_id]);
 }
 
@@ -44,10 +44,10 @@ export const updateDoctor = async (connection, doctorData) => {
          region, state_of_practice, time_zone, years_of_experience } = doctorData;
     await connection.query(`
         UPDATE doctor
-        SET license_number = ?, specialization = ?, city_of_practice = ?,
-            place_of_work = ?, region = ?, state_of_practice = ?, time_zone = ?,
-            years_of_experience = ?, user_id = ?
-        WHERE id = ?
+        SET license_number = $1, specialization = $2, city_of_practice = $3,
+            place_of_work = $4, region = $5, state_of_practice = $6, time_zone = $7,
+            years_of_experience = $8, user_id = $9
+        WHERE id = $10
     `, [license_number, specialization, city_of_practice, place_of_work, region,
         state_of_practice, time_zone, years_of_experience, id]);
 }
@@ -69,7 +69,7 @@ export const doctorPatientTable = async (connection) =>{
 export const create_user_patient = async (connection, doctor_id, patient_id) => {
     await connection.query(`
         INSERT INTO user_patient (doctor_id, patient_id)
-        VALUES (?, ?)
+        VALUES ($1, $2)
     `, [doctor_id, patient_id]);
 }
 
@@ -79,7 +79,7 @@ export const getPatientsByDoctorId = async (connection, doctor_id) => {
        FROM patient
        JOIN users ON users.id =  patient.user_id
        WHERE patient.id IN 
-       (SELECT patient_id FROM doctor_patient WHERE doctor_id = ?)
+       (SELECT patient_id FROM doctor_patient WHERE doctor_id = $1)
     `, [doctor_id]);
     return rows;
 }
@@ -90,7 +90,7 @@ export const getDoctorsByPatientId = async (connection, patient_id) => {
        FROM doctor
        JOIN users ON users.id =  doctor.user_id
        WHERE doctor.id IN 
-       (SELECT doctor_id FROM doctor_patient WHERE patient_id = ?)
+       (SELECT doctor_id FROM doctor_patient WHERE patient_id = $1)
     `, [patient_id]);
     return rows;
 }
@@ -99,7 +99,7 @@ export const getDoctorsByPatientId = async (connection, patient_id) => {
 //     const [rows] = await connection.query(`
 //         SELECT doctor.*
 //         FROM doctor
-//         WHERE doctor.user_id = ?
+//         WHERE doctor.user_id = $
 //     `, [user_id]);
 //     return rows;
 // }

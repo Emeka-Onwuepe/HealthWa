@@ -41,33 +41,33 @@ export const create_appointment = async (connection, appointmentData) => {
             patient_id, schedule, status } = appointmentData;
     await connection.query(`
         INSERT INTO appointment (type, symptoms, preferred_professional, preferred_gender, doctor_id, patient_id, schedule, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     `, [type, symptoms, preferred_professional, preferred_gender, doctor_id, patient_id, schedule, status]);
 }
 
 export const get_appointments_by_user = async (connection, userId) => {
     const [rows] = await connection.query(`
         SELECT * FROM appointment 
-        WHERE doctor_id = ? OR patient_id = ?
+        WHERE doctor_id = $1 OR patient_id = $2
         ORDER BY schedule DESC
     `, [userId, userId]);
     return rows;
 }
 export const update_appointment_status = async (connection, appointmentId, status) => {
     await connection.query(`
-        UPDATE appointment SET status = ? WHERE id = ?
+        UPDATE appointment SET status = $1 WHERE id = $2
     `, [status, appointmentId]);
 }
 
 export const delete_appointment = async (connection, appointmentId) => {
     await connection.query(`
-        DELETE FROM appointment WHERE id = ?
+        DELETE FROM appointment WHERE id = $1
     `, [appointmentId]);
 }
 
 export const get_appointments_by_status = async (connection, status) => {
     const [rows] = await connection.query(`
-        SELECT * FROM appointment WHERE status = ?
+        SELECT * FROM appointment WHERE status = $1
     `, [status]);
     return rows;
 }

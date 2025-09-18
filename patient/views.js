@@ -4,6 +4,8 @@ import { createPatient, getPatientByUserId } from "./models.js";
 import { getDoctorsByPatientId } from '../practisioner/models.js'
 
 export const handlePatient = async (req, res) =>{
+      await connection.connect();
+
     const patientData = req.body.data
     const action = req.body.action
 
