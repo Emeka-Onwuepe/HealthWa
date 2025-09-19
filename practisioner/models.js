@@ -9,6 +9,7 @@
 //       time_zone,
 //       years_of_experience,
 // }
+import connection from '../connection.js';
 import { getQueryData } from '../helpers.js'
 
 export const createDoctorTable = async (connection) => {
@@ -97,6 +98,14 @@ export const getDoctorsByPatientId = async (connection, patient_id) => {
     return getQueryData(queryData,true);
     
 }
+
+export const getDoctorsByUserId = async (connection,user_id) =>{
+    let queryData = await connection.query(
+        `SELECT * FROM doctor WHERE doctor.user_id = $1`,
+        [user_id]
+    )
+    return getQueryData(queryData)
+} 
 
 // export const getDoctors_By_UserId = async (connection, user_id) => {
 //     const [rows] = await connection.query(`

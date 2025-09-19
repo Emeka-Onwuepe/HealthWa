@@ -1,5 +1,5 @@
 import { set_dob_abt_and_gender,getUser ,verifyToken} from '../users/models.js'
-import { getPatientsByDoctorId,createDoctor } from './models.js'
+import { getPatientsByDoctorId,createDoctor,getDoctorsByUserId } from './models.js'
 import connection from "../connection.js";
 
 
@@ -28,7 +28,7 @@ export const handlePractitioner = async (req,res) =>{
             delete doctorData.gender;
             delete doctorData.about_me;
 
-           const [doctor] = await getDoctorsByUserId(connection,user.id);
+           const doctor = await getDoctorsByUserId(connection,user.id);
            if(!doctor){
             await createDoctor(connection, doctorData);
            }

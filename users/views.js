@@ -52,6 +52,7 @@ export const login = async (req, res) => {
   // update user token
   const usertoken = await updateUserToken(connection, user.id);
   user.usertoken = usertoken;
+  // remember to update for patient and doctor
   res.status(200).json({ user });
 };
 
