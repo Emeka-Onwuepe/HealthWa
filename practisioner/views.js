@@ -28,9 +28,9 @@ export const handlePractitioner = async (req,res) =>{
             delete doctorData.gender;
             delete doctorData.about_me;
 
-           const doctor = await getDoctorsByUserId(connection,user.id);
+           let doctor = await getDoctorsByUserId(connection,user.id);
            if(!doctor){
-            await createDoctor(connection, doctorData);
+            doctor = await createDoctor(connection, doctorData);
            }
            let [userData] = await getUser(connection, 'id', user.id);
            const patients = await getPatientsByDoctorId(connection,doctor.id)

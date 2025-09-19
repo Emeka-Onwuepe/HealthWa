@@ -33,12 +33,15 @@ export const createDoctorTable = async (connection) => {
 export const createDoctor = async (connection, doctorData) => {
     const { license_number, specialization, city_of_practice, place_of_work,
          region, state_of_practice, time_zone, years_of_experience, user_id } = doctorData;
-         console.log(doctorData)
-    await connection.query(`
+    const queryData =  await connection.query(`
         INSERT INTO doctor (license_number, specialization, city_of_practice, 
         place_of_work, region, state_of_practice, time_zone, years_of_experience, user_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) `, [license_number, specialization, city_of_practice, place_of_work, region, 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+        RETURNING * ;
+        `, 
+        [license_number, specialization, city_of_practice, place_of_work, region, 
         state_of_practice, time_zone, years_of_experience, user_id]);
+    return getQueryData(queryData)
 }
 
 export const updateDoctor = async (connection, doctorData) => {
