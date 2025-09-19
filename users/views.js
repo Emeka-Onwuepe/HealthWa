@@ -12,15 +12,11 @@ export const signup = async (req, res) => {
   // get the user
   try {
     // create user
-    console.log('create user')
     const user = await createUser(connection, { full_name, email, phone_number, password, user_role });
     // get the user's OTP
-    console.log('get otp')
     const otp = await getOTP(connection, user.id);
     // send OTP to user's email
-    console.log('otp',otp);
-
-    // await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
+    await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
     return res.status(201).json({ user });
 
   } catch (error) {
