@@ -126,7 +126,7 @@ export const verify_email_phone = async (connection,name,userId) => {
   `, [userId]);
   // destroy OTP
   await connection.query(`
-    UPDATE user_metadata SET otp = NULL WHERE user_id = $1
+    UPDATE user_metadata SET otp = 0 WHERE user_id = $1
   `, [userId]);
 };
 
