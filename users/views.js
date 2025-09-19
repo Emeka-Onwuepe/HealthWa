@@ -4,17 +4,16 @@ import { createUser, getUser,getOTP,setOTP,verifyToken,
 
  } from "./models.js";
 import sendEmail from '../email/email_sender.js';
-
+const pg = await import('pg')
+import data from "../locals.js";
 
 export const signup = async (req, res) => {
-  await connection.connect();
-  console.log('started')
-  const { full_name, email, phone_number, password, role } = req.body;
+  const { full_name, email, phone_number, password, user_role } = req.body;
   // get the user
   try {
     // create user
     console.log('create user')
-    const user = await createUser(connection, { full_name, email, phone_number, password, role });
+    const user = await createUser(connection, { full_name, email, phone_number, password, user_role });
     // get the user's OTP
     console.log('get otp')
     const otp = await getOTP(connection, user.id);
@@ -37,10 +36,10 @@ export const signup = async (req, res) => {
         await sendEmail(user.email, 'Your OTP', `Your OTP is ${otp}`, `<b>Your OTP is ${otp}</b>`);
         return res.status(201).json({ user });
       }
-      
+    }else{
+      return res.status(403).json({message : error.detail})
     }
   }
- 
 };
 
 

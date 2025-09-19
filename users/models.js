@@ -10,7 +10,7 @@ export const createUserTable = async (connection) => {
       email VARCHAR(255) NOT NULL UNIQUE,
       phone_number VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
-      role VARCHAR(50) NOT NULL DEFAULT 'patient',
+      user_role VARCHAR(50) NOT NULL DEFAULT 'patient',
       verified_email BOOLEAN DEFAULT FALSE,
       verified_phone_number BOOLEAN DEFAULT FALSE,
       usertoken VARCHAR(255) NOT NULL,
@@ -79,17 +79,17 @@ export const getOTP = async (connection, userId) => {
 
 export const createUser = async (connection, userData) => {
   console.log('started create user')
-  const { full_name, email, phone_number, password, role } = userData;
+  const { full_name, email, phone_number, password, user_role } = userData;
   const  e_password = passwordEncryption(password)
   const usertoken = generateToken(); // Generate a user token
   const usertoken_expiry = new Date(Date.now() + 12 * 60 * 60 * 1000); // 12 hours from now
   // create user
-  console.log('creating')
   let user =  await connection.query(`
-    INSERT INTO users (full_name, email, phone_number, password, role, usertoken, usertoken_expiry)
+    INSERT INTO users (full_name, email, phone_number, password, user_role, usertoken, usertoken_expiry)
     VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING *;
-  `, [full_name, email, phone_number, e_password, role, usertoken, usertoken_expiry]);
+    RETURNING * ; `, 
+    [full_name, email, phone_number, e_password, user_role, usertoken, usertoken_expiry])
+  
   // create user metadata
   user = getQueryData(user)
   delete user['created_at']
@@ -176,24 +176,24 @@ export const verifyToken = async (connection, usertoken,password=false) => {
 
 export const updateUser = async (connection, userId, userData) => {
   const { full_name, email, phone_number,
-     role,profile_image,gender,about_me,
+     user_role,profile_image,gender,about_me,
     license_number,years_of_experience,specialization,date_of_birth } = userData;
   await connection.query(`
     UPDATE users SET full_name = $1, email = $2, phone_number = $3,
-     role = $4, profile_image = $5, gender = $6, about_me = $7,
+     user_role = $4, profile_image = $5, gender = $6, about_me = $7,
      license_number = $8, years_of_experience = $9, specialization = $10,
      date_of_birth = $11 WHERE id = $12
-  `, [full_name, email, phone_number, role, profile_image, gender, about_me,
+  `, [full_name, email, phone_number, user_role, profile_image, gender, about_me,
       license_number, years_of_experience, specialization, date_of_birth, userId]);
 };
 
 export const updateUserPatient = async (connection, userId, userData) => {
-  const { full_name, email, phone_number,role,profile_image,gender,
+  const { full_name, email, phone_number,user_role,profile_image,gender,
     date_of_birth } = userData;
   await connection.query(`
     UPDATE users SET full_name = $1, email = $2, phone_number = $3,
-     role = $4, profile_image = $5, gender = $6,
+     user_role = $4, profile_image = $5, gender = $6,
      date_of_birth = $7 WHERE id = $8
-  `, [full_name, email, phone_number, role, profile_image, gender,
+  `, [full_name, email, phone_number, user_role, profile_image, gender,
       date_of_birth, userId]);
 };
