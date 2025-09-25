@@ -3,8 +3,15 @@ import { verifyToken, set_dob_and_gender,getUser } from "../users/models.js";
 import { createPatient, getPatientByUserId } from "./models.js";
 import { getDoctorsByPatientId } from '../practisioner/models.js'
 
+//to be removed later 
+export const get_all_patients = async (req,res)=>{
+  const patients = await connection.query(`SELECT patient.*, users.*
+                                          FROM patient
+                                          JOIN users ON users.id = patient.user_id`)
+  return res.status(200).json(patients.rows)
+}
+
 export const handlePatient = async (req, res) =>{
-      await connection.connect();
 
     const patientData = req.body.data
     const action = req.body.action

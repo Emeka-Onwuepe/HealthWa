@@ -3,6 +3,14 @@ import { getPatientsByDoctorId,createDoctor,getDoctorsByUserId } from './models.
 import connection from "../connection.js";
 
 
+//to be removed later 
+export const get_all_doctors = async (req,res)=>{
+  const doctor = await connection.query(`SELECT doctor.*, users.*
+                                          FROM doctor
+                                          JOIN users ON users.id = doctor.user_id`)
+  return res.status(200).json(doctor.rows)
+  }
+
 export const handlePractitioner = async (req,res) =>{
     await connection.connect();
     const doctorData = req.body.data

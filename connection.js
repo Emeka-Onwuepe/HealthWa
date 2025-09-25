@@ -14,15 +14,6 @@ import data from './locals.js'
 // Load environment variables from .env file
 // dotenv.config();
 
-// Create the connection to database
-// const connection = await mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   database: 'HealthWa',
-//   password: ''
-// });
-
-
 // const connection = new pg.Pool({
 //   user: data.DB_USER || 'root',
 //   database: data.DATABASE || 'HealthWa',

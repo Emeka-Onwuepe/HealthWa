@@ -7,6 +7,12 @@ import sendEmail from '../email/email_sender.js';
 import { getDoctorsByUserId } from "../practisioner/models.js";
 
 
+// TO BE REMOVED LATER
+export const get_all_users = async (req,res) => {
+  const users = await connection.query('SELECT * FROM users')
+  return res.status(200).json(users.rows)
+}
+
 export const signup = async (req, res) => {
   const { full_name, email, phone_number, password, user_role } = req.body;
   // get the user
