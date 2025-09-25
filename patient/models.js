@@ -18,17 +18,20 @@ export const createPatientTable = async (connection) => {
 export const createPatient = async (connection, patientData) => {
     const { occupation, weight, height, is_diabetic, is_asthmatic, 
              medications, on_long_term_meds, user_id } = patientData;
-    await connection.query(`INSERT INTO patient (occupation, weight, 
+    const queryData = await connection.query(`INSERT INTO patient (occupation, weight, 
             height, is_diabetic, is_asthmatic, medications, on_long_term_meds,
-             user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+             user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             RETURNING * ;
+             `,
               [occupation, weight, height, is_diabetic, is_asthmatic, 
                 medications, on_long_term_meds, user_id]);
+    return getQueryData(queryData)
 }
 
 
 
 export const getPatientByUserId = async (connection, userId) => {
-    let queryData = await connection.query(`SELECT * FROM patient WHERE user_id = $`, [userId]);
+    let queryData = await connection.query(`SELECT * FROM patient WHERE user_id = $1`, [userId]);
     return getQueryData(queryData);  
 }
 

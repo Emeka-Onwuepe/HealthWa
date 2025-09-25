@@ -24,7 +24,6 @@ export const handlePatient = async (req, res) =>{
    }
 
    patientData.user_id = user.id;
-
    
        if (action == 'create'){
            // Create a new patient record
@@ -33,9 +32,16 @@ export const handlePatient = async (req, res) =>{
             patientData.date_of_birth, patientData.gender);
             delete patientData.date_of_birth;
             delete patientData.gender;
-            await createPatient(connection,patientData);
 
-           const patient = await getPatientByUserId(connection,user.id);
+           let patient = await getPatientByUserId(connection,user.id);
+           if(!patient){
+            patient = await createPatient(connection,patientData);
+
+           }
+            
+            // await createPatient(connection,patientData);
+
+          //  const patient = await getPatientByUserId(connection,user.id);
            let [userData] = await getUser(connection, 'id', user.id);
            const doctors = await getDoctorsByPatientId(connection,patient.id)
 
