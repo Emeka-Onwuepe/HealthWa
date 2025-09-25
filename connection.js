@@ -48,16 +48,16 @@ const models = {
 try {
 
   await connection.query(`ALTER TABLE users
-  DROP COLUMN license_number
-  DROP COLUMN years_of_experience
+  DROP COLUMN license_number,
+  DROP COLUMN years_of_experience,
   DROP COLUMN specialization
   `)
 
-  const result = await connection.query(`ALTER TABLE users
-  RENAME COLUMN role TO user_role
-  `)
+  // const result = await connection.query(`ALTER TABLE users
+  // RENAME COLUMN role TO user_role
+  // `)
 } catch (error) {
-  
+  console.log(error)
 }
 
 await connection.connect();
