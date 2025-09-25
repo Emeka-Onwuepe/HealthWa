@@ -18,9 +18,6 @@ export const createUserTable = async (connection) => {
       profile_image VARCHAR(255),
       gender VARCHAR(6) CHECK (gender IN ('male', 'female', 'other')) DEFAULT 'other',
       about_me TEXT, 
-      license_number VARCHAR(25),
-      years_of_experience VARCHAR(5),
-      specialization VARCHAR(100),
       date_of_birth DATE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )

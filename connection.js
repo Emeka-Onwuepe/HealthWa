@@ -45,8 +45,14 @@ const models = {
   doctor_patient: doctorPatientTable
 };
 
-
 try {
+
+  await connection.query(`ALTER TABLE users
+  DROP COLUMN license_number
+  DROP COLUMN years_of_experience
+  DROP COLUMN specialization
+  `)
+
   const result = await connection.query(`ALTER TABLE users
   RENAME COLUMN role TO user_role
   `)
