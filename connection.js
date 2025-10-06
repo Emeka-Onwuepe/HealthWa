@@ -53,10 +53,10 @@ try {
   // DROP COLUMN specialization
   // `)
 
-  await connection.query(`ALTER TABLE user_metadata
-  ADD COLUMN socket_id VARCHAR(255),
-  ADD COLUMN connected BOOLEAN DEFAULT FALSE
-  `)
+  // await connection.query(`ALTER TABLE user_metadata
+  // ADD COLUMN socket_id VARCHAR(255),
+  // ADD COLUMN connected BOOLEAN DEFAULT FALSE
+  // `)
 
   // const result = await connection.query(`ALTER TABLE users
   // RENAME COLUMN role TO user_role
