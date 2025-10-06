@@ -5,5 +5,6 @@ export const getQueryData = (querydata,list=false) =>{
     if (data.length == 1 && !list)
         data = data[0]
 
+    console.log(data)
     return data
 }

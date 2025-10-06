@@ -146,7 +146,7 @@ export const getUser = async (connection, identifier, value,password=false) => {
       userData['password'] = decryptPassword(userData['password'])
     }
     
-  return [userData] ? userData : [null] ;
+  return [userData];
 };
 
 export const verifyToken = async (connection, usertoken,password=false) => {
