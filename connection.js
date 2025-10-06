@@ -45,20 +45,25 @@ const models = {
   doctor_patient: doctorPatientTable
 };
 
-// try {
+try {
 
-//   await connection.query(`ALTER TABLE users
-//   DROP COLUMN license_number,
-//   DROP COLUMN years_of_experience,
-//   DROP COLUMN specialization
-//   `)
+  // await connection.query(`ALTER TABLE users
+  // DROP COLUMN license_number,
+  // DROP COLUMN years_of_experience,
+  // DROP COLUMN specialization
+  // `)
 
-//   // const result = await connection.query(`ALTER TABLE users
-//   // RENAME COLUMN role TO user_role
-//   // `)
-// } catch (error) {
-//   console.log(error)
-// }
+  await connection.query(`ALTER TABLE user_metadata
+  ADD COLUMN socket_id VARCHAR(255),
+  ADD COLUMN connected BOOLEAN DEFAULT FALSE
+  `)
+
+  // const result = await connection.query(`ALTER TABLE users
+  // RENAME COLUMN role TO user_role
+  // `)
+} catch (error) {
+  console.log(error)
+}
 
 await connection.connect();
 

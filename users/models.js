@@ -31,6 +31,8 @@ export const createUserTable = async (connection) => {
       user_id INTEGER NOT NULL,
       otp VARCHAR(6) NOT NULL,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      socket_id VARCHAR(255),
+      connected BOOLEAN DEFAULT FALSE,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `);
@@ -75,7 +77,6 @@ export const getOTP = async (connection, userId) => {
 // };
 
 export const createUser = async (connection, userData) => {
-  console.log('started create user')
   const { full_name, email, phone_number, password, user_role } = userData;
   const  e_password = passwordEncryption(password)
   const usertoken = generateToken(); // Generate a user token
@@ -93,7 +94,6 @@ export const createUser = async (connection, userData) => {
   delete user['usertoken_expiry']
   delete user['password']
   const otp = generateOTP();
-  console.log('creating meta')
   await connection.query(`
     INSERT INTO user_metadata (user_id, otp) VALUES ($1, $2)
   `, [user.id, otp]);

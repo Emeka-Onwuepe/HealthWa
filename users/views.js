@@ -5,6 +5,7 @@ import { createUser, getUser,getOTP,setOTP,verifyToken,
  } from "./models.js";
 import sendEmail from '../email/email_sender.js';
 import { getDoctorsByUserId } from "../practisioner/models.js";
+import { getPatientByUserId } from '../patient/models.js'
 
 
 // TO BE REMOVED LATER
@@ -59,17 +60,18 @@ export const login = async (req, res) => {
   const usertoken = await updateUserToken(connection, user.id);
   user.usertoken = usertoken;
   // remember to update for patient and doctor
+  let userData;
   if(user.user_role === 'patient') {
     const patient = await getPatientByUserId(connection,user.id);
-    user = {...patient, ...user }
+    userData = {...patient, ...user }
     delete userData['user_id']
   }
   else if(user.user_role === 'practitioner') {
     let doctor = await getDoctorsByUserId(connection,user.id);
-    user = {...doctor, ...user }
+    userData = {...doctor, ...user }
     delete userData['user_id']
   }
-  res.status(200).json({ user });
+  res.status(200).json({ user:userData });
 };
 
 
