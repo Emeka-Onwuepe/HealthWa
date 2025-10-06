@@ -49,7 +49,13 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   await connection.connect();
   const { email, password } = req.body;
-  const [user] = await getUser(connection, 'email', email,true);
+  let user;
+  try {
+      user = await getUser(connection, 'email', email,true);
+      user = user[0]
+  } catch (error) {
+      return res.status(401).json({ message: error.message });
+  }
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
