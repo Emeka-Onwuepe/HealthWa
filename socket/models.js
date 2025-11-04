@@ -7,8 +7,17 @@ export const getUserBySocketId = async (socket_id,connection) => {
     return result.rows[0];
 };
 
+export const getSocketIdByUserId = async (user_id,connection) => {
+  const result = await connection.query(`
+    SELECT u.*, um.* FROM users u
+    JOIN user_metadata um ON u.id = um.user_id
+    WHERE um.user_id = $1
+  `, [user_id]);
+  return result.rows[0];
+};
+
 export const updateUserSocket = async (user_token, socket_id, connected,connection) => {
-    console.log(socket_id,user_token)
+    // console.log(socket_id,user_token)
   const result = await connection.query(`
     UPDATE user_metadata
     SET socket_id = $1, connected = $2
@@ -18,8 +27,8 @@ export const updateUserSocket = async (user_token, socket_id, connected,connecti
   return result.rows[0];
 };
 
-export const closeUserSocket = async (socket_id, connected) => {
-    console.log(socket_id,user_token)
+export const closeUserSocket = async (socket_id, connection) => {
+    // console.log(socket_id,user_token)
   const result = await connection.query(`
     UPDATE user_metadata
     SET socket_id = '', connected = false
