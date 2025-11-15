@@ -36,10 +36,16 @@ app.use((req, res, next) => {
 
 
 io.on("connection", (socket) => {
-  console.log('a user connected:', socket.id);
   const token = socket.handshake.auth.token;
   updateUserSocket(token, socket.id, true, connection)
-    .then(data => data)
+    .then(data =>   {
+      if(data.socket_id != socket.id){
+      console.log(data.socket_id, 'a user connected:', socket.id)
+      }else{
+        console.log('a new user connected')
+      }
+
+      })
     .catch(err => console.error('updateUserSocket error', err));
 
   getUserBySocketId(socket.id, connection)
@@ -52,7 +58,7 @@ io.on("connection", (socket) => {
     .catch(err => console.error('getUserBySocketId error', err));
 
   socket.on('disconnect', () => {
-    console.log('disconnect',socket.handshake.auth.token);
+    console.log('disconnect',socket.id);
     closeUserSocket(socket.id, connection)
       .then(data => console.log(data, 'disconnected'))
       .catch(err => console.error('closeUserSocket error', err));
@@ -62,15 +68,20 @@ io.on("connection", (socket) => {
 
   socket.on('video-offer', (data, callback) => {
     console.log('video-offer received from', socket.id);
-    
+     const received = data
+    //  console.log('video offer',data)
     getRecipient(data, socket, connection, io)
       .then((data) => {
         if (!data) {
+          console.log('data',data)
+          // connection.query('select * from user_metadata where user_id=71')
+          // .then(data=>console.log(data.rows[0]))
           callback({ status: 'error', error: 'Recipient not found or not connected' });
+
           return;
         }
         const { sender, recipientSocketData } = data;
-         const emitData = { ...data, from: sender.user_id,
+         const emitData = { ...received, from: sender.user_id,
                       action: 'offer-received' };
       recipientEmitter(io,recipientSocketData,emitData,'video-offer')
         callback({ status: 'ok' });
@@ -81,7 +92,9 @@ io.on("connection", (socket) => {
       });
   });
 
+
   socket.on('video-answer', (data, callback) => {
+    const received = data
     console.log('video-answer received from', socket.id);
     getRecipient(data, socket, connection, io)
       .then((data) => {
@@ -90,9 +103,10 @@ io.on("connection", (socket) => {
           return;
         }
         const { sender, recipientSocketData } = data;
-        const emitData = { ...data, from: sender.user_id, action: 'answer-received' };
+        const emitData = { ...received, from: sender.user_id, action: 'answer-received' };
         recipientEmitter(io,recipientSocketData,emitData,'video-answer')
         callback({ status: 'ok' });
+
       })
       .catch(err => {
         console.error('getRecipient error', err);
@@ -101,6 +115,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on('new-ice-candidate', (data, callback) => {
+    const received = data
     console.log('new-ice-candidate received from', socket.id);
     getRecipient(data, socket, connection, io)
       .then((data) => {
@@ -109,8 +124,8 @@ io.on("connection", (socket) => {
           return;
         }
         const { sender, recipientSocketData } = data;
-        const emitData = { ...data, from: sender.user_id, action: 'candidate-received' };
-
+        console.log('sender',sender.user_id)
+        const emitData = { ...received, from: sender.user_id, action: 'candidate-received' };
         // io.to(recipientSocketData.socket_id).emit('new-ice-candidate', emitData);
         recipientEmitter(io,recipientSocketData,emitData,'new-ice-candidate')
         

@@ -11,6 +11,7 @@ import { getPatientByUserId } from '../patient/models.js'
 // TO BE REMOVED LATER
 export const get_all_users = async (req,res) => {
   const users = await connection.query('SELECT * FROM users')
+  console.log('accessing all users')
   return res.status(200).json(users.rows)
 }
 
@@ -64,8 +65,10 @@ export const login = async (req, res) => {
     return res.status(401).json({ message: 'Invalid password' });
   }
   // update user token
-  const usertoken = await updateUserToken(connection, user.id);
-  user.usertoken = usertoken;
+  user = await updateUserToken(connection, user.id);
+  if (!user) {
+    return res.status(404).json({ message: 'unable to update token' });
+  }
   // remember to update for patient and doctor
   let userData;
   if(user.user_role === 'patient') {

@@ -34,16 +34,18 @@ import { getUserBySocketId, updateUserSocket,
     //   .catch(err => console.error('getUserBySocketId error', err));
 
      export const getRecipient = async (data, socket, connection, io) => {
-        const targetUserId = data?.data?.to || data?.to;
+        const targetUserId = data?.data?.to.id || data?.to.id;
         const sender = await getUserBySocketId(socket.id, connection);
-
         if (!sender) {
+          console.log('user not found')
           socket.emit('user_not_found');
           return null;
         }
         const recipientSocketData = await getSocketIdByUserId(targetUserId, connection);
         if (!recipientSocketData) {
+          console.log('recipient not found id',targetUserId)
           socket.emit('recipient_not_found');
+          
           return null;
         }
 

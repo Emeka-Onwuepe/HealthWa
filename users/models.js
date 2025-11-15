@@ -111,10 +111,16 @@ export const updatePassword = async (connection,new_password,user_id)=>{
 export const updateUserToken = async (connection, userId) => {
   const usertoken = generateToken();
   const usertoken_expiry = new Date(Date.now() + 12 * 60 * 60 * 1000); // 12 hours from now
-  await connection.query(`
+  const user = await connection.query(`
     UPDATE users SET usertoken = $1, usertoken_expiry = $2 WHERE id = $3
+    RETURNING *;
   `, [usertoken, usertoken_expiry, userId]);
-  return usertoken;
+
+  if(user.rowCount == 0){
+    console.log('update failed')
+  }
+
+  return user.rows[0];
 };
 
 export const verify_email_phone = async (connection,name,userId) => {
