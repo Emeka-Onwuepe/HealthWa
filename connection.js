@@ -53,6 +53,14 @@ try {
   // DROP COLUMN specialization
   // `)
 
+  // 
+  // await connection.query(`ALTER TABLE doctor
+  // ADD COLUMN license_image VARCHAR(255)
+  // `)
+
+  // await connection.query("Delete from users")
+
+
   // await connection.query(`ALTER TABLE user_metadata
   // ADD COLUMN socket_id VARCHAR(255),
   // ADD COLUMN connected BOOLEAN DEFAULT FALSE

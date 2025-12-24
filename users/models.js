@@ -39,13 +39,15 @@ export const createUserTable = async (connection) => {
 };
 
 export const set_dob_and_gender = async (connection, userId, dateOfBirth, gender) => {
+    gender = gender.toLowerCase()
     await connection.query(`
       UPDATE users SET date_of_birth = $1, gender = $2 WHERE id = $3
     `, [dateOfBirth, gender, userId]);
   };
 
 export const set_dob_abt_and_gender = async (connection, userId, dateOfBirth, gender,about_me) => {
-    await connection.query(`
+    gender = gender.toLowerCase()
+  await connection.query(`
       UPDATE users SET date_of_birth = $1, gender = $2 , about_me = $3 WHERE id = $4
     `, [dateOfBirth, gender, about_me, userId]);
   };

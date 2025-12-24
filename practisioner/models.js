@@ -17,6 +17,7 @@ export const createDoctorTable = async (connection) => {
         CREATE TABLE IF NOT EXISTS doctor (
             id SERIAL PRIMARY KEY,
             license_number VARCHAR(255) NOT NULL,
+            license_image VARCHAR(255),
             specialization VARCHAR(255) NOT NULL,
             city_of_practice VARCHAR(255) NOT NULL,
             place_of_work VARCHAR(255) NOT NULL,
@@ -47,7 +48,7 @@ export const createDoctor = async (connection, doctorData) => {
 export const updateDoctor = async (connection, doctorData) => {
     const { id, license_number, specialization, city_of_practice, place_of_work,
          region, state_of_practice, time_zone, years_of_experience } = doctorData;
-    await connection.query(`
+    const queryData = await connection.query(`
         UPDATE doctor
         SET license_number = $1, specialization = $2, city_of_practice = $3,
             place_of_work = $4, region = $5, state_of_practice = $6, time_zone = $7,
@@ -55,6 +56,7 @@ export const updateDoctor = async (connection, doctorData) => {
         WHERE id = $10
     `, [license_number, specialization, city_of_practice, place_of_work, region,
         state_of_practice, time_zone, years_of_experience, id]);
+    return getQueryData(queryData)
 }
 
 
